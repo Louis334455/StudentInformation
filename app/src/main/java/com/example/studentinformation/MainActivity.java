@@ -24,14 +24,24 @@ public class MainActivity extends AppCompatActivity {
         adapter = new StudentAdapter(this, dbHelper);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            private long lastClickTime = 0;
+            private int lastClickPosition = -1;
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Student student = (Student) adapter.getItem(position);
-                Intent intent = new Intent(MainActivity.this, Studentdetails.class);
-                intent.putExtra("student_id", student.getStudentId());
-                startActivity(intent);
+                long now = System.currentTimeMillis();
+
+                if (position == lastClickPosition && (now - lastClickTime < 400)) {
+                    Student student = (Student) adapter.getItem(position);
+                    Intent intent = new Intent(MainActivity.this, Studentdetails.class);
+                    intent.putExtra("student_id", student.getStudentId());
+                    startActivity(intent);
+                }
+                lastClickTime = now;
+                lastClickPosition = position;
             }
         });
+
     }
 
     private void addSampleData() {
